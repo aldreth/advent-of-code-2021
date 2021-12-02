@@ -14,6 +14,6 @@ fn reads_file_correctly() {
     let inputs = read_input_from_file("./inputs/test.txt".to_string());
     assert_eq!(
         inputs,
-        [199, 200, 208, 210, 200, 207, 240, 269, 260, 263].to_vec()
+        vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]
     );
 }
