@@ -1,4 +1,4 @@
-use std::fs;
+mod inputs;
 
 fn count_increases(measurements: Vec<u32>) -> u32 {
     let mut increases: u32 = 0;
@@ -12,26 +12,15 @@ fn count_increases(measurements: Vec<u32>) -> u32 {
     increases
 }
 
-fn read_input_from_file(filename: String) -> Vec<u32> {
-    fs::read_to_string(filename)
-        .expect("Something went wrong reading the file")
-        .lines()
-        .map(|line| line.parse::<u32>().expect("Not a valid u32"))
-        .collect()
-}
-
 #[cfg(test)]
-mod tests {
-    #[test]
-    fn finds_seven_inputs_for_the_test_file() {
-        let inputs = super::read_input_from_file("./inputs/test.txt".to_string());
-        let count = super::count_increases(inputs.to_vec());
-        assert_eq!(7, count);
-    }
+#[test]
+fn test_count_increases() {
+    let count = count_increases([199, 200, 208, 210, 200, 207, 240, 269, 260, 263].to_vec());
+    assert_eq!(7, count);
 }
 
 fn main() {
-    let inputs = read_input_from_file("./inputs/input.txt".to_string());
+    let inputs = inputs::read_input_from_file("./inputs/input.txt".to_string());
     let count = count_increases(inputs.to_vec());
     println!("There have been {} increases", count);
 }
