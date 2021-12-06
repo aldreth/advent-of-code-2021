@@ -3,7 +3,6 @@ use std::fs;
 #[derive(Debug, PartialEq, Eq)]
 pub enum Directions {
     Forward,
-    Backward,
     Up,
     Down,
 }
@@ -11,7 +10,6 @@ pub enum Directions {
 fn match_direction(word: &str) -> Directions {
     match word {
         "forward" => Directions::Forward,
-        "backward" => Directions::Backward,
         "up" => Directions::Up,
         "down" => Directions::Down,
         _ => panic!("Doesn't match a direction"),
@@ -21,7 +19,6 @@ fn match_direction(word: &str) -> Directions {
 #[test]
 fn test_match_direction() {
     assert_eq!((Directions::Forward), match_direction("forward"));
-    assert_eq!((Directions::Backward), match_direction("backward"));
     assert_eq!((Directions::Up), match_direction("up"));
     assert_eq!((Directions::Down), match_direction("down"));
 }
@@ -62,7 +59,6 @@ pub fn get_position_and_result(inputs: Vec<(Directions, u32)>) -> (u32, u32, u32
     for (direction, distance) in inputs {
         match direction {
             Directions::Forward => x += distance,
-            Directions::Backward => x -= distance,
             Directions::Down => y += distance,
             Directions::Up => y -= distance,
         }
@@ -75,4 +71,28 @@ fn test_get_position_and_result() {
     let inputs = read_input_from_file("./inputs/day2test.txt");
     let position_and_result = get_position_and_result(inputs);
     assert_eq!((15, 10, 150), position_and_result);
+}
+
+pub fn get_position_and_result_part_2(inputs: Vec<(Directions, u32)>) -> (u32, u32, u32) {
+    let mut x = 0;
+    let mut y = 0;
+    let mut aim = 0;
+    for (direction, distance) in inputs {
+        match direction {
+            Directions::Forward => {
+                x += distance;
+                y += aim * distance;
+            }
+            Directions::Down => aim += distance,
+            Directions::Up => aim -= distance,
+        }
+    }
+    (x, y, x * y)
+}
+
+#[test]
+fn test_get_position_and_result_part_2() {
+    let inputs = read_input_from_file("./inputs/day2test.txt");
+    let position_and_result = get_position_and_result_part_2(inputs);
+    assert_eq!((15, 60, 900), position_and_result);
 }
