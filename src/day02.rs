@@ -1,10 +1,78 @@
-fn getPositionAndResult() -> (u32, u32, u32) {
-    (1, 2, 3)
+use std::fs;
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Directions {
+    Forward,
+    Backward,
+    Up,
+    Down,
 }
 
-#[cfg(test)]
+fn match_direction(word: &str) -> Directions {
+    match word {
+        "forward" => Directions::Forward,
+        "backward" => Directions::Backward,
+        "up" => Directions::Up,
+        "down" => Directions::Down,
+        _ => panic!("Doesn't match a direction"),
+    }
+}
+
 #[test]
-fn test_count_increases() {
-    let count = count_increases(vec![199, 200, 208, 210, 200, 207, 240, 269, 260, 263]);
-    assert_eq!(7, count);
+fn test_match_direction() {
+    assert_eq!((Directions::Forward), match_direction("forward"));
+    assert_eq!((Directions::Backward), match_direction("backward"));
+    assert_eq!((Directions::Up), match_direction("up"));
+    assert_eq!((Directions::Down), match_direction("down"));
+}
+
+#[test]
+#[should_panic]
+fn test_match_direction_panics() {
+    assert_eq!((Directions::Down), match_direction("other"));
+}
+
+fn parse_line(line: &str) -> (Directions, u32) {
+    let parts: Vec<&str> = line.split_whitespace().collect();
+    if parts.len() != 2 {
+        panic!("Expecting two parts");
+    }
+    let direction = match_direction(parts[0]);
+    let distance = parts[1].parse::<u32>().expect("Not a valid u32");
+    (direction, distance)
+}
+
+#[test]
+fn test_parse_line() {
+    let distance: u32 = 15;
+    assert_eq!((Directions::Forward, distance), parse_line("forward 15"));
+}
+
+pub fn read_input_from_file(filename: &str) -> Vec<(Directions, u32)> {
+    fs::read_to_string(filename)
+        .expect("Something went wrong reading the file")
+        .lines()
+        .map(|line| parse_line(line))
+        .collect()
+}
+
+pub fn get_position_and_result(inputs: Vec<(Directions, u32)>) -> (u32, u32, u32) {
+    let mut x = 0;
+    let mut y = 0;
+    for (direction, distance) in inputs {
+        match direction {
+            Directions::Forward => x += distance,
+            Directions::Backward => x -= distance,
+            Directions::Down => y += distance,
+            Directions::Up => y -= distance,
+        }
+    }
+    (x, y, x * y)
+}
+
+#[test]
+fn test_get_position_and_result() {
+    let inputs = read_input_from_file("./inputs/day2test.txt");
+    let position_and_result = get_position_and_result(inputs);
+    assert_eq!((15, 10, 150), position_and_result);
 }
